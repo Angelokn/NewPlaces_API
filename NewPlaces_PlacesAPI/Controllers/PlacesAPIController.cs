@@ -1,20 +1,21 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NewPlaces_PlacesAPI.Models;
+using NewPlaces_PlacesAPI.Models.Dto;
 
 namespace NewPlaces_PlacesAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/PlacesAPI")]
     [ApiController]
     public class PlacesAPIController : ControllerBase
     {
         [HttpGet]
-        public IEnumerable<Place> GetPlaces()
+        public IEnumerable<PlaceDTO> GetPlaces()
         {
-            return new List<Place>
+            return new List<PlaceDTO>
             {
-                new Place { Id = 1, Name = "Sun Villa" },
-                new Place { Id = 2, Name = "Beach View" }
+                new PlaceDTO { Id = 1, Name = "Sun Villa" },
+                new PlaceDTO { Id = 2, Name = "Beach View" }
             };
         }
     }
