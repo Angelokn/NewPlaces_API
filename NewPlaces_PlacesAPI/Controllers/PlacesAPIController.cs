@@ -15,5 +15,11 @@ namespace NewPlaces_PlacesAPI.Controllers
         {
             return PlaceStore.placeList;
         }
+
+        [HttpGet("{id:int}")]
+        public PlaceDTO GetPlaceById(int id)
+        {
+            return PlaceStore.placeList.FirstOrDefault(u=>u.Id==id);
+        }
     }
 }
