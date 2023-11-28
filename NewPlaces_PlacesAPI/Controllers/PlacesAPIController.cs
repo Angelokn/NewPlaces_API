@@ -11,15 +11,27 @@ namespace NewPlaces_PlacesAPI.Controllers
     public class PlacesAPIController : ControllerBase
     {
         [HttpGet]
-        public IEnumerable<PlaceDTO> GetPlaces()
+        public ActionResult <IEnumerable<PlaceDTO>> GetPlaces()
         {
-            return PlaceStore.placeList;
+            return Ok(PlaceStore.placeList);
         }
 
         [HttpGet("{id:int}")]
-        public PlaceDTO GetPlaceById(int id)
+        public ActionResult<PlaceDTO> GetPlaceById(int id)
         {
-            return PlaceStore.placeList.FirstOrDefault(u=>u.Id==id);
+            if (id ==0)
+            {
+                return BadRequest();
+            }
+
+            var place = Ok(PlaceStore.placeList.FirstOrDefault(u=>u.Id==id));
+
+            if (place == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(place);
         }
     }
 }
