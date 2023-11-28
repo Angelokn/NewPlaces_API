@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using NewPlaces_PlacesAPI.Data;
 using NewPlaces_PlacesAPI.Models;
 using NewPlaces_PlacesAPI.Models.Dto;
 
@@ -12,11 +13,7 @@ namespace NewPlaces_PlacesAPI.Controllers
         [HttpGet]
         public IEnumerable<PlaceDTO> GetPlaces()
         {
-            return new List<PlaceDTO>
-            {
-                new PlaceDTO { Id = 1, Name = "Sun Villa" },
-                new PlaceDTO { Id = 2, Name = "Beach View" }
-            };
+            return PlaceStore.placeList;
         }
     }
 }
