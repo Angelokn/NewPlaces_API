@@ -1,8 +1,12 @@
-﻿namespace NewPlaces_PlacesAPI.Models.Dto
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace NewPlaces_PlacesAPI.Models.Dto
 {
     public class PlaceDTO
     {
         public int Id { get; set; }
+        [Required]
+        [MaxLength(30)]
         public string Name { get; set; }
     }
 }

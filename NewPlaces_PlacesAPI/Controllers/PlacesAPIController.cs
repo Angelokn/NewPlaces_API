@@ -45,6 +45,12 @@ namespace NewPlaces_PlacesAPI.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public ActionResult<PlaceDTO> CreatePlace([FromBody]PlaceDTO placeDTO)
         {
+            if (PlaceStore.placeList.FirstOrDefault(u => u.Name.ToLower() == placeDTO.Name.ToLower()) != null)
+            {
+                ModelState.AddModelError("CustomError", "Place name already exists.");
+                return BadRequest(ModelState);
+            }
+
             if (placeDTO == null)
             {
                 return BadRequest(placeDTO);
