@@ -66,5 +66,27 @@ namespace NewPlaces_PlacesAPI.Controllers
 
             return CreatedAtRoute("GetPlace", new { id = placeDTO.Id }, placeDTO);
         }
+
+        [HttpDelete("{id:int}", Name = "DeletePlace")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult DeletePlace (int id)
+        {
+            if (id == 0)
+            {
+                return BadRequest();
+            }
+
+            var place = PlaceStore.placeList.FirstOrDefault(u => u.Id ==  id);
+
+            if (place == null)
+            {
+                return NotFound();
+            }
+
+            PlaceStore.placeList.Remove(place);
+            return NoContent();
+        }
     }
 }
