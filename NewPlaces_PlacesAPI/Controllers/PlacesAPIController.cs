@@ -17,8 +17,9 @@ namespace NewPlaces_PlacesAPI.Controllers
             return Ok(PlaceStore.placeList);
         }
 
-        [HttpGet("{id:int}")]
+        [HttpGet("{id:int}", Name = "GetPlace")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<PlaceDTO> GetPlaceById(int id)
@@ -57,7 +58,7 @@ namespace NewPlaces_PlacesAPI.Controllers
             placeDTO.Id = PlaceStore.placeList.OrderByDescending(u=>u.Id).FirstOrDefault().Id + 1;
             PlaceStore.placeList.Add(placeDTO);
 
-            return Ok(placeDTO);
+            return CreatedAtRoute("GetPlace", new { id = placeDTO.Id }, placeDTO);
         }
     }
 }
