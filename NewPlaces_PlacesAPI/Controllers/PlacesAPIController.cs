@@ -67,6 +67,26 @@ namespace NewPlaces_PlacesAPI.Controllers
             return CreatedAtRoute("GetPlace", new { id = placeDTO.Id }, placeDTO);
         }
 
+        [HttpPut("{id:int", Name = "UpdatePlace")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public IActionResult UpdatePlace(int id, [FromBody]PlaceDTO placeDTO)
+        {
+            if (id != placeDTO.Id || placeDTO == null)
+            {
+                return BadRequest();
+            }
+
+            var place = PlaceStore.placeList.FirstOrDefault(u => u.Id == id);
+            
+            place.Name = placeDTO.Name;
+            place.Occupancy = placeDTO.Occupancy;
+            place.Sqft = placeDTO.Sqft;
+
+            return NoContent();
+            // -m "implemented Put method and added two more properties to PlaceDTO model"
+        }
+
         [HttpDelete("{id:int}", Name = "DeletePlace")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
