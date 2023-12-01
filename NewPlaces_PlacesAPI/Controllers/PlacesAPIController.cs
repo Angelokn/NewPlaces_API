@@ -11,10 +11,18 @@ namespace NewPlaces_PlacesAPI.Controllers
     [ApiController]
     public class PlacesAPIController : ControllerBase
     {
+        private readonly ILogger<PlacesAPIController> _logger;
+
+        public PlacesAPIController(ILogger<PlacesAPIController> logger)
+        {
+            _logger = logger;
+        }
+
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public ActionResult <IEnumerable<PlaceDTO>> GetPlaces()
+        public ActionResult<IEnumerable<PlaceDTO>> GetPlaces()
         {
+            _logger.LogInformation("Getting all places");
             return Ok(PlaceStore.placeList);
         }
 
@@ -27,6 +35,7 @@ namespace NewPlaces_PlacesAPI.Controllers
         {
             if (id ==0)
             {
+                _logger.LogError("Get Place Error with Id " + id);
                 return BadRequest();
             }
 
@@ -68,7 +77,7 @@ namespace NewPlaces_PlacesAPI.Controllers
             return CreatedAtRoute("GetPlace", new { id = placeDTO.Id }, placeDTO);
         }
 
-        [HttpPut("{id:int", Name = "UpdatePlace")]
+        [HttpPut("{id:int}", Name = "UpdatePlace")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public IActionResult UpdatePlace(int id, [FromBody]PlaceDTO placeDTO)
@@ -88,7 +97,7 @@ namespace NewPlaces_PlacesAPI.Controllers
             // -m "implemented Put method and added two more properties to PlaceDTO model"
         }
 
-        [HttpPatch("{id:int", Name = "UpdatePartialPlace")]
+        [HttpPatch("{id:int}", Name = "UpdatePartialPlace")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult PatchPlace(int id, JsonPatchDocument<PlaceDTO> patchDTO)
