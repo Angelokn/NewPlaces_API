@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using NewPlaces_PlacesAPI.Data;
 using NewPlaces_PlacesAPI.Models;
@@ -87,9 +88,36 @@ namespace NewPlaces_PlacesAPI.Controllers
             // -m "implemented Put method and added two more properties to PlaceDTO model"
         }
 
-        [HttpDelete("{id:int}", Name = "DeletePlace")]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [HttpPatch("{id:int", Name = "UpdatePartialPlace")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult PatchPlace(int id, JsonPatchDocument<PlaceDTO> patchDTO)
+        {
+            if (patchDTO == null || id == 0)
+            {
+                return BadRequest();
+            }
+
+            var place = PlaceStore.placeList.FirstOrDefault(u => u.Id == id);
+
+            if (place == null)
+            {
+                return BadRequest();
+            }
+
+            patchDTO.ApplyTo(place, ModelState);
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            return NoContent();
+        }
+
+        [HttpDelete("{id:int}", Name = "DeletePlace")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult DeletePlace (int id)
         {
