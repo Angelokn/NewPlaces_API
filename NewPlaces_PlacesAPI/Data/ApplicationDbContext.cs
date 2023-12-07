@@ -25,7 +25,7 @@ namespace NewPlaces_PlacesAPI.Data
                     Occupancy = 6,
                     Rate = 800,
                     Sqft = 650,
-                    //CreationDate = DateTime.Now
+                    CreationDate = DateTime.Now
                 },
                 new Place
                 {
@@ -36,7 +36,7 @@ namespace NewPlaces_PlacesAPI.Data
                     Occupancy = 6,
                     Rate = 800,
                     Sqft = 550,
-                    //CreationDate = DateTime.Now
+                    CreationDate = DateTime.Now
                 },
                 new Place
                 {
@@ -47,7 +47,7 @@ namespace NewPlaces_PlacesAPI.Data
                     Occupancy = 4,
                     Rate = 800,
                     Sqft = 450,
-                    //CreationDate = DateTime.Now
+                    CreationDate = DateTime.Now
 
                 },
                 new Place
@@ -59,7 +59,7 @@ namespace NewPlaces_PlacesAPI.Data
                     Occupancy = 8,
                     Rate = 800,
                     Sqft = 750,
-                    //CreationDate = DateTime.Now
+                    CreationDate = DateTime.Now
                 },
                 new Place
                 {
@@ -70,7 +70,7 @@ namespace NewPlaces_PlacesAPI.Data
                     Occupancy = 8,
                     Rate = 800,
                     Sqft = 850,
-                    //CreationDate = DateTime.Now
+                    CreationDate = DateTime.Now
                 }
               );
         }
