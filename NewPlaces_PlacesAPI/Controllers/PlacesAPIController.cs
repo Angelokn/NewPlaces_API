@@ -11,10 +11,12 @@ namespace NewPlaces_PlacesAPI.Controllers
     [ApiController]
     public class PlacesAPIController : ControllerBase
     {
+        private readonly ApplicationDbContext _db;
         private readonly ILogger<PlacesAPIController> _logger;
 
-        public PlacesAPIController(ILogger<PlacesAPIController> logger)
+        public PlacesAPIController(ApplicationDbContext db, ILogger<PlacesAPIController> logger)
         {
+            _db = db;
             _logger = logger;
         }
 
@@ -23,7 +25,7 @@ namespace NewPlaces_PlacesAPI.Controllers
         public ActionResult<IEnumerable<PlaceDTO>> GetPlaces()
         {
             _logger.LogInformation("Getting all places");
-            return Ok(PlaceStore.placeList);
+            return Ok(_db.Places.ToList());
         }
 
         [HttpGet("{id:int}", Name = "GetPlace")]
@@ -39,7 +41,7 @@ namespace NewPlaces_PlacesAPI.Controllers
                 return BadRequest();
             }
 
-            var place = PlaceStore.placeList.FirstOrDefault(u=>u.Id==id);
+            var place = _db.Places.FirstOrDefault(u=>u.Id==id);
 
             if (place == null)
             {
@@ -55,7 +57,7 @@ namespace NewPlaces_PlacesAPI.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public ActionResult<PlaceDTO> CreatePlace([FromBody]PlaceDTO placeDTO)
         {
-            if (PlaceStore.placeList.FirstOrDefault(u => u.Name.ToLower() == placeDTO.Name.ToLower()) != null)
+            if (_db.Places.FirstOrDefault(u => u.Name.ToLower() == placeDTO.Name.ToLower()) != null)
             {
                 ModelState.AddModelError("CustomError", "Place name already exists.");
                 return BadRequest(ModelState);
@@ -70,10 +72,25 @@ namespace NewPlaces_PlacesAPI.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
 
-            //considering the user will always enter a distinct Id (for now):
-            placeDTO.Id = PlaceStore.placeList.OrderByDescending(u=>u.Id).FirstOrDefault().Id + 1;
-            PlaceStore.placeList.Add(placeDTO);
+            Place model = new()
+            {
+                Id = placeDTO.Id,
+                Name = placeDTO.Name,
+                Details = placeDTO.Details,
+                Occupancy = placeDTO.Occupancy,
+                ImageUrl = placeDTO.ImageUrl,
+                Rate = placeDTO.Rate,
+                Sqft = placeDTO.Sqft
+            };
 
+            //considering the user will always enter a distinct Id:
+
+            //placeDTO.Id = PlaceStore.placeList.OrderByDescending(u=>u.Id).FirstOrDefault().Id + 1;
+            //PlaceStore.placeList.Add(placeDTO);
+
+            _db.Places.Add(model);
+            _db.SaveChanges();
+            
             return CreatedAtRoute("GetPlace", new { id = placeDTO.Id }, placeDTO);
         }
 
@@ -87,11 +104,24 @@ namespace NewPlaces_PlacesAPI.Controllers
                 return BadRequest();
             }
 
-            var place = PlaceStore.placeList.FirstOrDefault(u => u.Id == id);
-            
-            place.Name = placeDTO.Name;
-            place.Occupancy = placeDTO.Occupancy;
-            place.Sqft = placeDTO.Sqft;
+            //var place = PlaceStore.placeList.FirstOrDefault(u => u.Id == id);            
+            //place.Name = placeDTO.Name;
+            //place.Occupancy = placeDTO.Occupancy;
+            //place.Sqft = placeDTO.Sqft;
+
+            Place model = new()
+            {
+                Id = placeDTO.Id,
+                Name = placeDTO.Name,
+                Details = placeDTO.Details,
+                Occupancy = placeDTO.Occupancy,
+                ImageUrl = placeDTO.ImageUrl,
+                Rate = placeDTO.Rate,
+                Sqft = placeDTO.Sqft
+            };
+
+            _db.Places.Update(model);
+            _db.SaveChanges();
 
             return NoContent();
             // -m "implemented Put method and added two more properties to PlaceDTO model"
@@ -107,19 +137,44 @@ namespace NewPlaces_PlacesAPI.Controllers
                 return BadRequest();
             }
 
-            var place = PlaceStore.placeList.FirstOrDefault(u => u.Id == id);
+            var place = _db.Places.FirstOrDefault(u => u.Id == id);
 
             if (place == null)
             {
                 return BadRequest();
             }
 
-            patchDTO.ApplyTo(place, ModelState);
-
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
+
+            PlaceDTO placeDTO = new()
+            {
+                Id = place.Id,
+                Name = place.Name,
+                Details = place.Details,
+                Occupancy = place.Occupancy,
+                ImageUrl = place.ImageUrl,
+                Rate = place.Rate,
+                Sqft = place.Sqft
+            };
+
+            patchDTO.ApplyTo(placeDTO, ModelState);
+
+            Place model = new()
+            {
+                Id = placeDTO.Id,
+                Name = placeDTO.Name,
+                Details = placeDTO.Details,
+                Occupancy = placeDTO.Occupancy,
+                ImageUrl = placeDTO.ImageUrl,
+                Rate = placeDTO.Rate,
+                Sqft = placeDTO.Sqft
+            };
+
+            _db.Places.Update(model);
+            _db.SaveChanges();
 
             return NoContent();
         }
@@ -135,14 +190,16 @@ namespace NewPlaces_PlacesAPI.Controllers
                 return BadRequest();
             }
 
-            var place = PlaceStore.placeList.FirstOrDefault(u => u.Id ==  id);
+            var place = _db.Places.FirstOrDefault(u => u.Id ==  id);
 
             if (place == null)
             {
                 return NotFound();
             }
 
-            PlaceStore.placeList.Remove(place);
+            _db.Places.Remove(place);
+            _db.SaveChanges();
+
             return NoContent();
         }
     }
